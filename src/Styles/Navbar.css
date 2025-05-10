@@ -1,0 +1,81 @@
+.navbar {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    padding: 1.5rem 2rem; 
+    min-height: 100px; 
+  }
+  
+  .navbar-brand {
+    font-weight: 800; 
+    font-size: 2.25rem; 
+    letter-spacing: 0.5px; 
+    padding: 0.75rem 0; 
+    margin-right: 3rem; 
+  }
+  
+  .nav-link {
+    display: flex;
+    align-items: center;
+    padding: 1rem 2rem; 
+    margin: 0 1rem; 
+    font-size: 1.4rem;
+    font-weight: 500; 
+    transition: all 0.3s ease-out; 
+  }
+  
+  .nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+    transform: translateY(-3px); 
+    text-shadow: 0 2px 4px rgba(255, 255, 255, 0.2); 
+  }
+
+  .nav-link.active {
+    font-weight: 700;
+    background-color: rgba(255, 255, 255, 0.25);
+    border-radius: 8px; 
+    box-shadow: 0 2px 8px rgba(255, 255, 255, 0.1); 
+  }
+
+  @media (max-width: 992px) {
+    .navbar {
+        padding: 1.25rem; 
+        min-height: 90px; 
+    }
+  
+    .navbar-brand {
+        font-size: 1.8rem; 
+        margin-right: 2rem; 
+    }
+  
+    .navbar-collapse {
+        padding-top: 2rem; 
+    }
+  
+    .nav-link {
+        padding: 1rem 1.25rem;
+        font-size: 1.25rem;
+        margin: 0.5rem 0; 
+    }
+  
+    .nav-item {
+        margin-bottom: 1.25rem; 
+    }
+  }
+  .nav-icon {
+    font-size: 1.8rem; 
+    margin-right: 1rem; 
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+  }
+  
+  .nav-link:hover .nav-icon {
+    transform: scale(1.2) rotate(-5deg);
+    filter: drop-shadow(0 2px 4px rgba(255, 255, 255, 0.3)); 
+  }
+  .navbar-toggler {
+    padding: 1rem;
+    border-width: 2px;
+  }
+  
+  .navbar-toggler-icon {
+    width: 1.75em;
+    height: 1.75em;
+  }

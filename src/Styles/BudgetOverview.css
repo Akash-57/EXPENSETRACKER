@@ -1,0 +1,109 @@
+.budget-report {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+  
+.budget-comparison {
+    display: flex;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+  
+.budget-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    flex: 1;
+    min-width: 250px;
+}
+  
+.budget-card {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+  
+.budget-card h4 {
+    margin-top: 0;
+    color: #7f8c8d;
+    font-size: 16px;
+}
+  
+.budget-card p {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 10px 0 0;
+    color: #2c3e50;
+}
+  
+.budget-card.under {
+    border-left: 4px solid #27ae60;
+}
+  
+.budget-card.over {
+    border-left: 4px solid #e74c3c;
+}
+  
+.budget-chart {
+    flex: 2;
+    min-width: 300px;
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    height: 300px;
+}
+  
+.budget-by-category {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+  
+.budget-by-category h4 {
+    margin-top: 0;
+}
+  
+.budget-by-category table {
+    width: 100%;
+    border-collapse: collapse;
+}
+  
+.budget-by-category th, .budget-by-category td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+  
+.budget-by-category th {
+    color: #7f8c8d;
+    font-weight: normal;
+}
+  
+.budget-by-category .under {
+    color: #27ae60;
+}
+  
+.budget-by-category .over {
+    color: #e74c3c;
+}
+
+.loading-indicator {
+    text-align: center;
+    padding: 50px;
+    font-size: 18px;
+    color: #7f8c8d;
+}
+  
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .budget-comparison {
+        flex-direction: column;
+    }
+}
