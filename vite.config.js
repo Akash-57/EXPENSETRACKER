@@ -1,28 +1,26 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
+// https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
-  optimizeDeps: {
-    include: ['axios'],
-  },
   resolve: {
     alias: {
-      '@': '/src',
+      '@': '/src', // Simplified alias for src
     },
   },
   build: {
     outDir: 'dist',
-    chunkSizeWarningLimit: 1000,
+    chunkSizeWarningLimit: 1000, // Increased size limit to avoid warnings
     rollupOptions: {
       output: {
         manualChunks: (id) => {
           if (id.includes('node_modules')) {
-            // Improved vendor chunking
+            // Efficient chunking for vendors
             if (id.includes('react')) return 'vendor-react';
             if (id.includes('axios')) return 'vendor-axios';
             if (id.includes('chart.js')) return 'vendor-chartjs';
-            return 'vendor';
+            return 'vendor'; // General vendor chunk
           }
         },
       },
@@ -30,8 +28,7 @@ export default defineConfig({
   },
   server: {
     port: 3000,
-    // Removed host: true as it may cause issues in Vercel
   },
-  // Updated base path for Vercel compatibility
+  // Set base to '/' for correct asset loading on Vercel
   base: '/',
 });
