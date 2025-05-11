@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
-import "../styles/signup.css";
+import "../styles/Signup.css";
 
 const Signup = () => {
   const [username, setUsername] = useState("");
