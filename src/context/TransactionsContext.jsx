@@ -1,49 +1,86 @@
-import React, { createContext, useState, useContext, useCallback, useEffect } from "react";
-import axios from "axios";
+import React, { createContext, useState, useContext, useEffect, useCallback } from "react";
 
 const TransactionsContext = createContext();
 
 export const TransactionsProvider = ({ children }) => {
-  const [transactions, setTransactions] = useState([]);
-
-  // Fetch transactions from backend
-  const fetchTransactions = useCallback(async () => {
+  const [transactions, setTransactions] = useState(() => {
     try {
-      const res = await axios.get("http://localhost:8080/transactions");
-      setTransactions(res.data);
+      const saved = localStorage.getItem('transactions');
+      return saved ? JSON.parse(saved) : [];
     } catch (error) {
-      console.error("Error fetching transactions:", error);
+      console.error('Failed to parse transactions from localStorage', error);
+      return [];
+    }
+  });
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  // Persist to localStorage
+  useEffect(() => {
+    try {
+      localStorage.setItem('transactions', JSON.stringify(transactions));
+    } catch (error) {
+      console.error('Failed to save transactions to localStorage', error);
+      setError('Failed to save transactions');
+    }
+  }, [transactions]);
+
+  const addTransaction = useCallback((transaction) => {
+    setLoading(true);
+    setError(null);
+    try {
+      if (!transaction || !transaction.id) {
+        throw new Error('Invalid transaction data');
+      }
+      setTransactions(prev => [transaction, ...prev]);
+    } catch (error) {
+      console.error('Failed to add transaction:', error);
+      setError(error.message);
+    } finally {
+      setLoading(false);
     }
   }, []);
 
-  useEffect(() => {
-    fetchTransactions(); // Load transactions when component mounts
-  }, [fetchTransactions]);
-
-  // Add transaction to backend
-  const addTransaction = useCallback(async (transaction) => {
+  const deleteTransaction = useCallback((id) => {
+    setLoading(true);
+    setError(null);
     try {
-      await axios.post("http://localhost:8080/transactions", transaction);
-      fetchTransactions(); // Refresh transactions list after adding
+      if (!id) {
+        throw new Error('Invalid transaction ID');
+      }
+      setTransactions(prev => prev.filter(t => t.id !== id));
     } catch (error) {
-      console.error("Error adding transaction:", error);
+      console.error('Failed to delete transaction:', error);
+      setError(error.message);
+    } finally {
+      setLoading(false);
     }
-  }, [fetchTransactions]);
+  }, []);
 
-  // Get transactions by type (Fixing missing function)
-  const getTransactionsByType = useCallback((type) => {
-    return transactions.filter((t) => t.type === type);
-  }, [transactions]);
+  const clearTransactions = useCallback(() => {
+    setLoading(true);
+    try {
+      setTransactions([]);
+    } catch (error) {
+      console.error('Failed to clear transactions:', error);
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const value = {
+    transactions,
+    loading,
+    error,
+    addTransaction,
+    deleteTransaction,
+    clearTransactions,
+  };
 
   return (
-    <TransactionsContext.Provider
-      value={{
-        transactions,
-        fetchTransactions,
-        addTransaction,
-        getTransactionsByType, // Now available
-      }}
-    >
+    <TransactionsContext.Provider value={value}>
       {children}
     </TransactionsContext.Provider>
   );
@@ -56,3 +93,5 @@ export const useTransactions = () => {
   }
   return context;
 };
+
+export default TransactionsContext;

@@ -6,18 +6,42 @@ export default defineConfig({
   plugins: [react()],
   optimizeDeps: {
     include: ['axios'],
+    exclude: ['js-big-decimal'], // Exclude if not needed
   },
   resolve: {
     alias: {
-      '@': '/src',  // Optional: Alias for your source directory
+      '@': '/src',
     },
   },
   build: {
-    outDir: 'dist',  // Ensure the output directory is compatible with Vercel
+    outDir: 'dist',
+    chunkSizeWarningLimit: 1000, // Increased from default 500kb
+    rollupOptions: {
+      output: {
+        manualChunks: (id) => {
+          if (id.includes('node_modules')) {
+            // Split vendor chunks
+            if (id.includes('react')) {
+              return 'vendor-react';
+            }
+            if (id.includes('axios')) {
+              return 'vendor-axios';
+            }
+            if (id.includes('chart.js')) {
+              return 'vendor-chartjs';
+            }
+            return 'vendor'; // Other vendors
+          }
+        },
+      },
+    },
   },
   server: {
-    port: 3000,  // Use port 3000 to align with Vercel's environment
-    host: true,  // Allow network access during development
+    port: 3000,
+    host: true,
+    hmr: {
+      overlay: false, // Disable HMR overlay to reduce noise
+    },
   },
-  base: './',  // Relative paths for assets
+  base: './',
 });

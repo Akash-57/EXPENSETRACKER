@@ -1,10 +1,9 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { useTransactions } from "../context/TransactionsContext";
-import axios from "axios";
-import "../Styles/AddTransaction.css";
+import '../Styles/AddTransaction.css';
 
 const AddTransaction = () => {
-  const { fetchTransactions, addTransaction } = useTransactions();
+  const { addTransaction } = useTransactions(); // Get addTransaction from context
   const [formData, setFormData] = useState({
     description: "",
     amount: "",
@@ -45,18 +44,26 @@ const AddTransaction = () => {
     setMessage("");
 
     try {
-      await addTransaction({
+      const newTransaction = {
         ...formData,
         amount: parseFloat(formData.amount),
         date: new Date().toISOString(),
-      });
+        id: Date.now()
+      };
 
-      fetchTransactions(); // Refresh transactions list
-      setFormData({ description: "", amount: "", category: "Food", type: "expense" });
+      await addTransaction(newTransaction);
+      
+      setFormData({
+        description: "",
+        amount: "",
+        category: formData.type === "income" ? "Salary" : "Food",
+        type: formData.type,
+      });
+      
       setMessage("Transaction added successfully!");
     } catch (error) {
       console.error("Error adding transaction:", error);
-      setMessage("Failed to add transaction.");
+      setMessage("Failed to add transaction. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -66,7 +73,7 @@ const AddTransaction = () => {
     <div className="add-transaction">
       <div className="component-container">
         <h2>Add New Transaction</h2>
-        {message && <p className="message">{message}</p>}
+        {message && <p className={`message ${message.includes("successfully") ? "success" : "error"}`}>{message}</p>}
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label>Transaction Type</label>
@@ -133,7 +140,11 @@ const AddTransaction = () => {
             </div>
           </div>
 
-          <button type="submit" className="submit-btn" disabled={loading || !formData.description || !formData.amount}>
+          <button 
+            type="submit" 
+            className="submit-btn" 
+            disabled={loading || !formData.description || !formData.amount}
+          >
             {loading ? "Processing..." : "Add Transaction"}
           </button>
         </form>

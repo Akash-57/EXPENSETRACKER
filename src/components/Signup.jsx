@@ -1,4 +1,3 @@
-import axios from "axios"; // Import Axios
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -11,7 +10,7 @@ const Signup = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
 
-  const handleSignup = async (e) => {
+  const handleSignup = (e) => {
     e.preventDefault();
     setIsSubmitting(true);
     setError("");
@@ -28,23 +27,25 @@ const Signup = () => {
       return;
     }
 
-    try {
-      const response = await axios.post("http://localhost:8080/signup", {
-        username,
-        password,
-      });
-
-      if (response.data === "Signup successful") {
-        navigate("/login");
-      } else {
-        setError(response.data); // Handle backend validation message
-      }
-    } catch (err) {
-      setError("Error connecting to server. Please try again.");
-      console.error("Signup error:", err);
-    } finally {
+    // Check if username already exists
+    const users = JSON.parse(localStorage.getItem("users")) || [];
+    const userExists = users.some(user => user.username === username);
+    
+    if (userExists) {
+      setError("Username already exists");
       setIsSubmitting(false);
+      return;
     }
+
+    // Store new user
+    const newUser = { username, password };
+    localStorage.setItem("users", JSON.stringify([...users, newUser]));
+    
+    // Simulate API call
+    setTimeout(() => {
+      navigate("/login");
+      setIsSubmitting(false);
+    }, 1000);
   };
 
   return (
@@ -85,7 +86,14 @@ const Signup = () => {
             className="btn btn-success w-100"
             disabled={isSubmitting}
           >
-            {isSubmitting ? "Creating account..." : "Signup"}
+            {isSubmitting ? (
+              <>
+                <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                Creating account...
+              </>
+            ) : (
+              "Signup"
+            )}
           </button>
         </form>
         <div className="text-center mt-3">

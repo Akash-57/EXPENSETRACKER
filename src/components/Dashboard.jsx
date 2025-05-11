@@ -1,26 +1,36 @@
-import { useTransactions } from "../context/TransactionsContext.jsx";
+import { useTransactions } from "../context/TransactionsContext";
 import SummaryCard from "./SummaryCard";
 import ExpenseChart from "./ExpenseChart";
 import "../Styles/Dashboard.css";
 
 const Dashboard = () => {
-  const { transactions } = useTransactions();
+  const { transactions, loading } = useTransactions();
 
   // Handle loading state
-  if (!transactions) {
+  if (loading) {
     return <div className="dashboard-container"><p>Loading transactions...</p></div>;
   }
 
-  if (transactions.length === 0) {
-    return <div className="dashboard-container"><p>No transactions found.</p></div>;
+  if (!loading && (!transactions || transactions.length === 0)) {
+    return <div className="dashboard-container"><p>No transactions found. Add some transactions to see data.</p></div>;
   }
 
-  const totalIncome = transactions
-    .filter((t) => t.type === "income")
+  // Calculate totals for current month
+  const currentMonth = new Date().getMonth();
+  const currentYear = new Date().getFullYear();
+
+  const monthlyTransactions = transactions.filter(t => {
+    const transactionDate = new Date(t.date);
+    return transactionDate.getMonth() === currentMonth && 
+           transactionDate.getFullYear() === currentYear;
+  });
+
+  const totalIncome = monthlyTransactions
+    .filter(t => t.type === "income")
     .reduce((sum, t) => sum + Number(t.amount || 0), 0);
 
-  const totalExpenses = transactions
-    .filter((t) => t.type === "expense")
+  const totalExpenses = monthlyTransactions
+    .filter(t => t.type === "expense")
     .reduce((sum, t) => sum + Number(t.amount || 0), 0);
 
   const balance = totalIncome - totalExpenses;

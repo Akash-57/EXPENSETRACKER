@@ -12,6 +12,7 @@ const Login = () => {
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
+
   const generateCaptcha = () => {
     const chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     let captcha = "";
@@ -30,16 +31,35 @@ const Login = () => {
     e.preventDefault();
     setIsSubmitting(true);
     setError("");
+
     if (!username.trim() || !password.trim()) {
       setError("Please fill in all fields");
       setIsSubmitting(false);
       return;
     }
+
+    // First check credentials before showing CAPTCHA
     if (password && !showCaptcha) {
+      const users = JSON.parse(localStorage.getItem("users")) || [];
+      const user = users.find(user => user.username === username);
+      
+      if (!user) {
+        setError("Username not found");
+        setIsSubmitting(false);
+        return;
+      }
+
+      if (user.password !== password) {
+        setError("Incorrect password");
+        setIsSubmitting(false);
+        return;
+      }
+
       setShowCaptcha(true);
       setIsSubmitting(false);
       return;
     }
+
     if (showCaptcha && userCaptcha !== captchaText) {
       setError("Invalid CAPTCHA. Please try again.");
       generateCaptcha();
@@ -47,26 +67,13 @@ const Login = () => {
       return;
     }
 
-    try {
-      const users = JSON.parse(localStorage.getItem("users")) || [];
-      const user = users.find(u => u.username === username && u.password === password);
-
-      if (!user) {
-        setError("Invalid username or password");
-        setIsSubmitting(false);
-        setShowCaptcha(false);
-        generateCaptcha();
-        return;
-      }
+    // If we get here, credentials and CAPTCHA are correct
+    setTimeout(() => {
       localStorage.setItem("isAuthenticated", "true");
       localStorage.setItem("currentUser", JSON.stringify({ username }));
       navigate("/home");
-    } catch (err) {
-      setError("Login failed. Please try again.");
-      console.error("Login error:", err);
-    } finally {
       setIsSubmitting(false);
-    }
+    }, 1000);
   };
 
   return (

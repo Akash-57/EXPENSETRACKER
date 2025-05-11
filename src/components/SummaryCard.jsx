@@ -1,3 +1,5 @@
+import "../Styles/Dashboard.css";
+
 const SummaryCard = ({ title, value, type, trend }) => {
   const getIcon = () => {
     switch (type) {
