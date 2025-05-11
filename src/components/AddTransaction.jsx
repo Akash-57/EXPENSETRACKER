@@ -3,7 +3,7 @@ import { useTransactions } from "../context/TransactionsContext";
 import '../Styles/AddTransaction.css';
 
 const AddTransaction = () => {
-  const { addTransaction } = useTransactions(); // Get addTransaction from context
+  const { addTransaction } = useTransactions(); 
   const [formData, setFormData] = useState({
     description: "",
     amount: "",
