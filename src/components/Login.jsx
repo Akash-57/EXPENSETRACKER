@@ -27,7 +27,7 @@ const Login = () => {
     generateCaptcha();
   }, []);
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
     setError("");
@@ -68,12 +68,16 @@ const Login = () => {
     }
 
     // If we get here, credentials and CAPTCHA are correct
-    setTimeout(() => {
+    try {
+      await new Promise(resolve => setTimeout(resolve, 1000));
       localStorage.setItem("isAuthenticated", "true");
       localStorage.setItem("currentUser", JSON.stringify({ username }));
       navigate("/home");
+    } catch (err) {
+      setError("An error occurred during login");
+    } finally {
       setIsSubmitting(false);
-    }, 1000);
+    }
   };
 
   return (
@@ -87,9 +91,10 @@ const Login = () => {
         )}
         <form onSubmit={handleLogin}>
           <div className="mb-3">
-            <label className="form-label">Username</label>
+            <label htmlFor="username" className="form-label">Username</label>
             <input
               type="text"
+              id="username"
               className="form-control"
               placeholder="Enter your username"
               value={username}
@@ -98,9 +103,10 @@ const Login = () => {
             />
           </div>
           <div className="mb-3">
-            <label className="form-label">Password</label>
+            <label htmlFor="password" className="form-label">Password</label>
             <input
               type="password"
+              id="password"
               className="form-control"
               placeholder="Enter your password"
               value={password}
@@ -112,17 +118,18 @@ const Login = () => {
           {showCaptcha && (
             <div className="mb-3 captcha-container">
               <div className="d-flex justify-content-between align-items-center mb-2">
-                <label className="form-label">Enter CAPTCHA</label>
+                <label htmlFor="captcha" className="form-label">Enter CAPTCHA</label>
                 <button 
                   type="button" 
                   className="btn btn-sm btn-link p-0 text-decoration-none"
                   onClick={generateCaptcha}
+                  aria-label="Refresh CAPTCHA"
                 >
                   <i className="bi bi-arrow-clockwise"></i> Refresh
                 </button>
               </div>
               <div className="d-flex align-items-center gap-3">
-                <div className="captcha-display">
+                <div className="captcha-display bg-light p-2 rounded">
                   {captchaText.split('').map((char, index) => (
                     <span 
                       key={index} 
@@ -139,6 +146,7 @@ const Login = () => {
                 </div>
                 <input
                   type="text"
+                  id="captcha"
                   className="form-control flex-grow-1"
                   placeholder="Type the CAPTCHA"
                   value={userCaptcha}
@@ -165,10 +173,10 @@ const Login = () => {
           </button>
         </form>
         <div className="mt-3 text-center">
-          <p>
+          <p className="mb-1">
             Don't have an account? <Link to="/signup">Sign Up</Link>
           </p>
-          <p>
+          <p className="mb-0">
             <Link to="/">Back to Home</Link>
           </p>
         </div>
