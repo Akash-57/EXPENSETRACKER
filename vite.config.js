@@ -16,7 +16,7 @@ export default defineConfig({
       output: {
         manualChunks: (id) => {
           if (id.includes('node_modules')) {
-            // Efficient chunking for vendors
+            // Efficient vendor chunking
             if (id.includes('react')) return 'vendor-react';
             if (id.includes('axios')) return 'vendor-axios';
             if (id.includes('chart.js')) return 'vendor-chartjs';
